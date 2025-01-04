@@ -1,0 +1,13 @@
+provider "aws" {
+    region = "ap-southeast-1"
+    acces_key = ""
+    secret_key = ""
+}
+
+resource "aws_instance" "kimiEC2" {
+    ami = ""
+    instance_type = "t2.micro"
+    tags = {
+        Name = "Terraform-EC2"
+    }
+}
