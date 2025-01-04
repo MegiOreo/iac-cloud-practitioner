@@ -1,0 +1,188 @@
+{ 
+    "AWSTemplateFormatVersion": "2010-09-09", 
+    "Description": "Assessment 1", 
+    "Parameters": { 
+        "MyKey": { 
+            "Description": "My keypair for SSH", 
+            "Type": "String", 
+            "AllowedValues": [ 
+                "kimikt", 
+                "Key2", 
+                "Key3" 
+            ], 
+            "Default": "kimikt" 
+        }, 
+        "MyInstance": { 
+            "Description": "Instance type for EC2", 
+            "Type": "String", 
+            "AllowedValues": [ 
+                "t2.micro", 
+                "t2.nano", 
+                "t2.medium"                
+            ], 
+            "Default": "t2.micro" 
+        }, 
+        "NumberOfInstances": { 
+            "Description": "Number of EC2 instances", 
+            "Type": "Number", 
+            "MinValue": 2, 
+            "MaxValue": 3, 
+            "Default": 2 
+        } 
+    }, 
+    "Resources": { 
+        "KimiSG": { 
+            "Type": "AWS::EC2::SecurityGroup", 
+            "Properties": { 
+                "GroupDescription": "Allow SSH and HTTP traffic", 
+                "SecurityGroupIngress": [ 
+                    { 
+                        "IpProtocol": "tcp", 
+                        "FromPort": 22, 
+                        "ToPort": 22, 
+                        "CidrIp": "0.0.0.0/0" 
+                    }, 
+                    { 
+                        "IpProtocol": "tcp", 
+                        "FromPort": 80, 
+                        "ToPort": 80, 
+                        "CidrIp": "0.0.0.0/0" 
+                    } 
+                ] 
+            } 
+        }, 
+        "KimiEC2Instance1": { 
+            "Type": "AWS::EC2::Instance", 
+            "Properties": { 
+                "ImageId": "ami-06650ca7ed78ff6fa", 
+                "InstanceType": { 
+                    "Ref": "MyInstance" 
+                }, 
+                "KeyName": { 
+                    "Ref": "MyKey" 
+                }, 
+                "SecurityGroups": [ 
+                    { 
+                        "Ref": "KimiSG" 
+                    } 
+                ], 
+                "UserData": { 
+                    "Fn::Base64": { 
+                        "Fn::Sub": "#!/bin/bash\nsudo apt update -y\nsudo apt upgrade -y\nsudo apt install -y lamp-server^\n" 
+                    } 
+                }, 
+                "Tags": [ 
+                    { 
+                        "Key": "Name", 
+                        "Value": "EC2Instance1-LAMP" 
+                    } 
+                ] 
+            } 
+        }, 
+        "KimiEC2Instance2": { 
+            "Type": "AWS::EC2::Instance", 
+            "Properties": { 
+                "ImageId": "ami-06650ca7ed78ff6fa", 
+                "InstanceType": { 
+                    "Ref": "MyInstance" 
+                }, 
+                "KeyName": { 
+                    "Ref": "MyKey" 
+                }, 
+                "SecurityGroups": [ 
+                    { 
+                        "Ref": "KimiSG" 
+                    } 
+                ], 
+                "Tags": [ 
+                    { 
+                        "Key": "Name", 
+                        "Value": "EC2Instance2" 
+                    } 
+                ] 
+            } 
+        }, 
+        "KimiEC2Instance3": { 
+            "Condition": "CreateThirdInstance", 
+            "Type": "AWS::EC2::Instance", 
+            "Properties": { 
+                "ImageId": "ami-06650ca7ed78ff6fa", 
+                "InstanceType": { 
+                    "Ref": "MyInstance" 
+                }, 
+                "KeyName": { 
+                    "Ref": "MyKey" 
+                }, 
+                "SecurityGroups": [ 
+                    { 
+                        "Ref": "KimiSG" 
+                    } 
+                ], 
+                "Tags": [ 
+                    { 
+                        "Key": "Name", 
+                        "Value": "EC2Instance3" 
+                    } 
+                ] 
+            } 
+        } 
+    }, 
+    "Conditions": { 
+        "CreateThirdInstance":
+{ 
+            "Fn::Equals": [ 
+                {"Ref": "NumberOfInstances"}, 
+                3 
+            ] 
+        } 
+    }, 
+    "Outputs": { 
+        "Instance1ID": { 
+            "Description": "ID of the first EC2 instance", 
+            "Value": { 
+                "Ref": "KimiEC2Instance1" 
+            } 
+        }, 
+        "Instance1PublicIP": { 
+            "Description": "Public IP of the first EC2 instance", 
+            "Value": { 
+                "Fn::GetAtt": [ 
+                    "KimiEC2Instance1", 
+                    "PublicIp" 
+                ] 
+            } 
+        }, 
+        "Instance2ID": { 
+            "Description": "ID of the second EC2 instance", 
+            "Value": { 
+                "Ref": "KimiEC2Instance2" 
+            } 
+        }, 
+        "Instance2PublicIP": { 
+            "Description": "Public IP of the second EC2 instance", 
+            "Value": { 
+                "Fn::GetAtt": [ 
+                    "KimiEC2Instance2", 
+                    "PublicIp" 
+                ] 
+            } 
+        }, 
+        "Instance3ID": { 
+            "Condition": "CreateThirdInstance", 
+            "Description": "ID of the third EC2 instance", 
+            "Value": { 
+                "Ref": "KimiEC2Instance3" 
+            } 
+        }, 
+        "Instance3PublicIP": { 
+            "Condition": "CreateThirdInstance", 
+            "Description": "Public IP of the third EC2 instance", 
+            "Value": { 
+                "Fn::GetAtt": [ 
+                    "KimiEC2Instance3", 
+                    "PublicIp" 
+                ] 
+            } 
+        } 
+    } 
+}

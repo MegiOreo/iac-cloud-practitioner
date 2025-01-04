@@ -1,0 +1,19 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "EC2 Provisioning",
+    "Resources": {
+        "MyEC2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": "cfkey",
+                "ImageId": { -
+                },
+                "InstanceType": "t2.micro",
+                
+                "Tags":[
+                { "Key": "Name", "Value":  "TestEC2" }
+                ]
+            }
+        }
+    }
+}

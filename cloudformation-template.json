@@ -1,0 +1,150 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Create EC2 Instance",
+    "Resources": {
+        "1stTutoEC2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": "",
+                "ImageId": "",
+                "InstanceType": "-",
+                "Tags": [
+                    {
+                        "Key": "-",
+                        "Value": "-"
+                    }
+                ]
+            }
+        }
+    }
+}
+
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "",
+    "Resources": {
+        "secGroupName": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH and HTTP traffic",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "22",
+                        "ToPort": "22",
+                        "CidrIp": "-"
+                    },
+                    {
+                        "IpProtocol": "tcp",
+                        "FromPort": "80",
+                        "ToPort": "80",
+                        "CidrIp": "-"
+                    }
+                ],
+            }
+        }
+    },
+    "-": {
+        "Type": "AWS::EC2::Instance",
+        "Properties": {
+            "KeyName": -,
+            "ImageId": { -
+            },
+            "InstanceType": "-",
+            "SecurityGroupIds": [
+                {
+                    "Ref": "logicalName"
+                }
+            ],
+            "Tags": [
+                {
+                    "Key": "-",
+                    "Value": "-"
+                }
+            ],
+        }
+    }
+}
+
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Add parameters for KeyPair and Instance type",
+    "Parameters": {
+        "MyKey": {
+            "Description": "My keypair for SSH",
+            "Type": "[String|Number|CommaDelimitedList]",
+            "Default": "-"
+        },
+        "MyInstance": {
+            "Description": "Instance type for the EC2",
+            "Type": "[String|Number|CommaDelimitedList]",
+            "Default": "-"
+        }
+    },
+    "Resources": {
+        "KimiSG": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "Allow SSH and HTTP traffic",
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "[tcp|udp|ip]",
+                        "FromPort": "-",
+                        "ToPort": "-",
+                        "CidrIp": "-"
+                    }
+          
+          {
+                        "IpProtocol": "[tcp|udp|ip]",
+                        "FromPort": "-",
+                        "ToPort": "-",
+                        "CidrIp": "-"
+                    }
+                ],
+            }
+        },
+        "KimiEC2": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "KeyName": {
+                    "Ref": "MyKey"
+                },
+                "ImageId": { -
+                },
+                "InstanceType": {
+                    "Ref": "MyInstance"
+                },
+                "SecurityGroups": {
+                    "Ref": "KimiSG"
+                },
+                "Tags": [
+                    {
+                        "Key": "-",
+                        "Value": "-"
+                    }
+                ],
+            }
+        }
+    },
+    "Outputs": {
+        "InstanceID": {
+            "Description": "",
+            "Value": {
+                {
+                    "Ref": "KimiEC2"
+                }
+            }
+        },
+        "PublicIP": {
+            "Description": "Public IP of the EC2 instance",
+            "Value": {
+                {
+                    "Fn::GetAtt": [
+                        "logicalNameOfResource",
+                        "attributeName"
+                    ]
+                }
+            }
+        }
+    }
+}
